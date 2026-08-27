@@ -30,14 +30,4 @@ Open the local URL Gradio prints (usually `http://127.0.0.1:7860`).
 - **Level 4**: `format_citations()` reads `metadata["source"]`/`metadata["page"]` off the retrieved chunks and appends them after the answer.
 - **Level 5**: `condense_question()` rewrites a new question into a standalone one using the last few turns before retrieval ever happens, so "when was he born?" becomes "when was [Player Name] born?".
 
-## Submission notes (fill these in after you run it on your own document)
-
-**Document used:** _[fill in — e.g. "my linear algebra lecture notes.pdf"]_
-
-**Levels reached:** _[fill in]_
-
-**One thing that surprised me:** _[fill in — e.g. how much retrieval quality changed with chunk_size, or how the table-aware loader handled/mishandled a specific table]_
-
-## Level 6 (bonus) — not included here
-
 This repo currently ships as a self-contained Gradio app (Level 6's "keep Gradio as a standalone app.py" option is already satisfied). If you want to push further into a FastAPI backend + separate frontend, `rag_pipeline.py` is already decoupled from the UI — wrapping `answer_stream()` in a `POST /ask` FastAPI route (using `StreamingResponse`) is the main remaining step. Ask if you'd like that scaffolded too.
