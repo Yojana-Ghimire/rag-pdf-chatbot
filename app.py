@@ -1,16 +1,4 @@
-"""
-app.py — the Gradio front-end.
 
-Run with:
-    python app.py
-
-Covers, in one screen:
-  Level 1 - upload a PDF, ingest, chat (with chunk_size / k sliders to tune)
-  Level 2 - loader_mode dropdown to compare PyPDFLoader vs pdfplumber (tables)
-  Level 3 - answers stream token-by-token
-  Level 4 - every answer is followed by its source document + page number(s)
-  Level 5 - pronouns / follow-ups resolve using conversation history
-"""
 
 import os
 import tempfile
@@ -23,8 +11,7 @@ from rag_pipeline import split_documents, build_vectorstore, get_llm, answer_str
 load_dotenv()
 
 if not os.environ.get("GOOGLE_API_KEY") and os.environ.get("GEMINI_API_KEY"):
-    # langchain-google-genai looks for GOOGLE_API_KEY; alias it from GEMINI_API_KEY
-    # so you can use either name in your .env
+    
     os.environ["GOOGLE_API_KEY"] = os.environ["GEMINI_API_KEY"]
 
 LLM = get_llm(streaming=True)
@@ -38,13 +25,13 @@ def ingest(file, loader_mode, chunk_size, chunk_overlap):
 
     docs = load_pdf(file.name, mode=loader_mode)
     if not docs:
-        return None, [], "⚠️ Couldn't extract any text from that PDF (is it scanned/image-only?).", gr.update(interactive=False)
+        return None, [], " Couldn't extract any text from that PDF (is it scanned/image-only?).", gr.update(interactive=False)
 
     chunks = split_documents(docs, chunk_size=chunk_size, chunk_overlap=chunk_overlap)
     vectorstore = build_vectorstore(chunks)
 
     status = (
-        f"✅ Loaded **{os.path.basename(file.name)}** — "
+        f"Loaded **{os.path.basename(file.name)}** — "
         f"{len(docs)} page-level document(s) → {len(chunks)} chunks. Ask away!"
     )
     return vectorstore, [], status, gr.update(interactive=True)
@@ -72,7 +59,7 @@ def chat(message, history, vectorstore, k):
 
 
 with gr.Blocks(title="Chat With Your PDF") as demo:
-    gr.Markdown("# 📄 Chat With Your PDF\nUpload a document, then ask it questions.")
+    gr.Markdown("#  Chat With Your PDF\nUpload a document, then ask it questions.")
 
     vectorstore_state = gr.State(None)
 
