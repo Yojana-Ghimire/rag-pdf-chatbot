@@ -1,15 +1,6 @@
 """
 loaders.py — turning a PDF into LangChain Documents.
 
-Two loading strategies are provided so you can literally compare them
-(that's the Level 2 assignment):
-
-    load_pdf_simple(path)     -> plain text via PyPDFLoader
-    load_pdf_table_aware(path)-> text + tables via pdfplumber
-
-Both return a list of langchain_core.documents.Document, each with
-metadata = {"source": <filename>, "page": <1-indexed page number>, "content_type": "text" | "table"}
-so that citations (Level 4) always have something to point to.
 """
 
 import os
@@ -19,11 +10,7 @@ import pdfplumber
 
 
 def load_pdf_simple(path: str) -> list[Document]:
-    """
-    The baseline loader from the original session. Fast, but it flattens
-    tables into whatever order the raw text stream puts them in — numbers
-    and labels frequently end up disconnected from each other.
-    """
+   
     loader = PyPDFLoader(path)
     docs = loader.load()
     filename = os.path.basename(path)
@@ -35,15 +22,7 @@ def load_pdf_simple(path: str) -> list[Document]:
 
 
 def _table_to_text(table: list[list]) -> str:
-    """Render a pdfplumber table (list of rows) as a simple markdown-ish
-    string, e.g.:
 
-        | Year | Revenue | Growth |
-        | 2023 | 4.2M    | 12%    |
-
-    This keeps row/column relationships intact for the LLM, which a plain
-    text dump of the page usually destroys.
-    """
     rows = []
     for row in table:
         cells = [(cell or "").strip().replace("\n", " ") for cell in row]
@@ -52,16 +31,7 @@ def _table_to_text(table: list[list]) -> str:
 
 
 def load_pdf_table_aware(path: str) -> list[Document]:
-    """
-    Extraction strategy for messy PDFs (Level 2):
-      - pulls normal text with pdfplumber's extract_text()
-      - separately pulls tables with extract_tables() and renders them as
-        markdown-style rows so numbers stay attached to their column headers
-      - each table becomes its OWN Document chunk (content_type="table"),
-        so it can be retrieved and cited independently of the surrounding
-        prose, and so a big table doesn't get chopped mid-row by the
-        text splitter later on.
-    """
+
     filename = os.path.basename(path)
     docs: list[Document] = []
 
