@@ -1,15 +1,5 @@
 """
 rag_pipeline.py — everything that isn't "load the PDF" or "draw the UI".
-
-This is deliberately written without LangChain's higher-level chains
-(ConversationalRetrievalChain etc.) so every step is visible:
-
-    split_documents      -> Level 1 (chunking)
-    build_vectorstore     -> Level 1 (embed + store)
-    condense_question     -> Level 5 (resolve "he"/"it"/etc. using history)
-    retrieve              -> Level 1 (top-k similarity search)
-    format_citations      -> Level 4
-    answer_stream         -> Level 3 (token-by-token) wired to everything above
 """
 
 import os
